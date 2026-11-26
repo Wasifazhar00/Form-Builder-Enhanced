@@ -1,0 +1,19 @@
+[project]
+name = "local-bank-form-automation"
+version = "0.2.0"
+description = "Local-only Windows desktop tool for visual PDF form overlays and master-data filling"
+requires-python = ">=3.11"
+dependencies = [
+  "acroforge==0.4.0",
+  "PyMuPDF>=1.26,<2",
+  "PySide6>=6.8,<7",
+  "pandas>=2.2,<4",
+  "openpyxl>=3.1,<4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100

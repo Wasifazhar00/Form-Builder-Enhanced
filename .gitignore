@@ -1,0 +1,26 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.spec
+*.log
+
+# Local banking records and private forms must never be committed.
+local_data/
+private_forms/
+outputs/
+exports/
+*.filled.pdf
+*.output.pdf
+*.signature.png
+*.signature.jpg
+*.signature.jpeg
+
+# Keep only the clearly synthetic, repository-owned demo workbook.
+*.xlsx
+!samples/sample_master.xlsx
