@@ -138,7 +138,10 @@ def load_template(path: str | Path) -> dict[str, Any]:
             "Re-link the original source form in the app."
         )
     actual_hash = sha256_bytes(source.read_bytes())
-    if template.get("source_sha256") != actual_hash:
+    expected_hash = template.get("source_sha256")
+    # Older portable/example templates may omit a fingerprint. New templates
+    # created by this app always include one and are checked strictly.
+    if expected_hash and expected_hash != actual_hash:
         raise ValueError(
             "The selected source form does not match the SHA-256 fingerprint saved in this template."
         )

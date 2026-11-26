@@ -2,7 +2,6 @@
   "template_version": 1,
   "name": "sample_application_form",
   "source_path": "sample_application_form.pdf",
-  "source_sha256": "95adefd35e69fde94044bd340d561bdef9864e7fd5a73de9f4ecf6a9518fdbbe",
   "page_sizes_pt": [
     [
       595.276,
