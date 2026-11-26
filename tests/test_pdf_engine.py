@@ -106,6 +106,22 @@ def test_overlay_generation_preserves_original_page_count_and_size() -> None:
     assert sha256_bytes(SAMPLE_PDF.read_bytes()) == original_hash
 
 
+def test_overlay_rejects_missing_master_data_mapping() -> None:
+    with pytest.raises(ValueError, match="master-data columns are missing"):
+        render_overlay_pdf_bytes(
+            SAMPLE_PDF,
+            [{
+                "id": "missing-column",
+                "label": "Customer name",
+                "data_key": "customer_name_typo",
+                "type": "text",
+                "page": 0,
+                "rect": [100, 100, 240, 124],
+            }],
+            {"customer_name": "Ayesha"},
+        )
+
+
 def test_overlay_rejects_field_outside_document_pages() -> None:
     with pytest.raises(ValueError, match="references page"):
         render_overlay_pdf_bytes(

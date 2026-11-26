@@ -70,6 +70,26 @@ def _row_value(record: dict[str, Any], key: str) -> Any:
     return record.get(key, "") if key else ""
 
 
+def _validate_field_mappings(fields: list[dict[str, Any]], record: dict[str, Any]) -> None:
+    """Fail closed when a template refers to a column missing from the loaded sheet."""
+    missing = sorted({
+        str(field.get("data_key", "")).strip()
+        for field in fields
+        if str(field.get("data_key", "")).strip()
+        and str(field.get("data_key", "")).strip() not in record
+        and not (
+            field.get("type") == "signature"
+            and str(field.get("signature_path", "")).strip()
+        )
+    })
+    if missing:
+        columns = ", ".join(missing)
+        raise ValueError(
+            f"Template mapping error: these master-data columns are missing: {columns}. "
+            "Load the correct workbook or update the field mappings before generating PDFs."
+        )
+
+
 def _fit_font_size(text: str, rect: fitz.Rect, requested: float, minimum: float) -> float:
     """Find the largest font size that can fit the field's available width."""
     available_width = max(1.0, rect.width - 4.0)
@@ -213,6 +233,7 @@ def render_overlay_pdf_bytes(
     This renderer deliberately does not create AcroForm widget borders. The
     source file on disk is only read; the returned PDF is a separate byte string.
     """
+    _validate_field_mappings(fields, record)
     source_bytes = source_as_pdf_bytes(source_path)
     with fitz.open(stream=source_bytes, filetype="pdf") as source_document:
         original_page_count = source_document.page_count
@@ -267,6 +288,7 @@ def generate_filled_pdf_bytes(
     record: dict[str, Any],
 ) -> bytes:
     """Run AcroForge's build/fill/flatten pass, then create the clean final overlay."""
+    _validate_field_mappings(fields, record)
     source_bytes = source_as_pdf_bytes(source_path)
     with fitz.open(stream=source_bytes, filetype="pdf") as source_document:
         sizes = [(float(page.rect.width), float(page.rect.height)) for page in source_document]
